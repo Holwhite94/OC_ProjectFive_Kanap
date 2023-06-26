@@ -19,7 +19,7 @@ return response.json()})
   // adding image
  
   const productImg = document.getElementsByClassName('item__img')[0];
-  productImg.innerHTML = `<img src="${product.imageUrl}">`;
+  productImg.innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
 
   // adding title
 
@@ -35,6 +35,17 @@ return response.json()})
   productDescription.innerText = `${product.description}`;
 
   // adding color options
-})
+  const productColors = document.getElementsByTagName('select')[0];
+
+  console.log(productColors);
+
+  let html = "";
+  product.colors.forEach((color) => {
+    html += `<option value="${color}">${color}</option>`;
+  });
+
+  productColors.innerHTML = html;
+});
+
 
 

@@ -47,5 +47,23 @@ return response.json()})
   productColors.innerHTML = html;
 });
 
+// adding products to the cart setItem(key, value), getitem(key), removeItem (key) etc. notes in googlekeep
 
+
+//adding an event listener to find value of color and quantity selected
+
+const cartButton = document.getElementsByTagName('button')[0];
+
+
+cartButton.addEventListener('click', function() {
+
+  const chosenColor = document.getElementsByTagName('select')[0].value;
+
+ console.log(chosenColor);
+
+});
+
+function addToCart (item) {
+
+}
 

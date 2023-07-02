@@ -41,7 +41,7 @@ return response.json()})
   productDescription.innerText = `${product.description}`;
 
   // adding color options
-  const productColors = document.querySelector('select')[0];
+  const productColors = document.querySelector('select');
 
   // console.log(productColors);
 
@@ -70,9 +70,17 @@ cartButton.addEventListener('click', function() {
 
   console.log(productName);
   //error message if nothing is selected
+  let error = {
+    noColor: 'Please choose a color!', 
+    noQuantity: 'Please choose a quantity!' 
+  };
 
-  if (chosenColor === '' || itemQuantity === '0') {
-    alert ('Please chose a color and quantity to continue to cart.');
+  if (chosenColor === '') {
+    alert (error.noColor);
+    return;
+  }
+  if (itemQuantity === '0') {
+    alert (error.noQuantity);
     return;
   }
 

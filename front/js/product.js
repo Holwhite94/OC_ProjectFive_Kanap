@@ -47,7 +47,7 @@ return response.json()})
   productColors.innerHTML = html;
 });
 
-// adding products to the cart setItem(key, value), getitem(key), removeItem (key) etc. notes in googlekeep
+
 
 
 //adding an event listener to find value of color and quantity selected
@@ -58,8 +58,16 @@ const cartButton = document.getElementsByTagName('button')[0];
 cartButton.addEventListener('click', function() {
 
   const chosenColor = document.getElementsByTagName('select')[0].value;
+  const itemQuantity = document.getElementsByTagName('input')[0].value;
+   
+  //error message if nothing is selected
 
- console.log(chosenColor);
+  if (chosenColor === '' || itemQuantity === '0') {
+    alert ('Please chose a color and quantity to continue to cart.');
+    return;
+  }
+
+ console.log(chosenColor, itemQuantity);
 
 });
 

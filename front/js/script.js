@@ -17,7 +17,7 @@ fetch(apiUrl)
   })
   .then((data) => {
     const products = data;
-    const items = document.getElementById("items");
+    const items = document.querySelector('#items');
 
     const url = new URL(window.location.href);
     url.searchParams.set('id', products.id);

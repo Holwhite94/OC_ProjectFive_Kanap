@@ -25,7 +25,7 @@ return response.json()})
   const productImg = document.querySelector('.item__img');
 
   console.log(productImg);
-  productImg.innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
+  productImg.innerHTML = `<img class="productImage" src="${product.imageUrl}" alt="${product.altTxt}">`;
 
   // adding title
 
@@ -67,8 +67,11 @@ cartButton.addEventListener('click', function() {
   const chosenColor = document.getElementsByTagName('select')[0].value;
   const itemQuantity = document.getElementsByTagName('input')[0].value;
   const productName = document.getElementById('title').innerText; 
+  const imageUrl = document.querySelector('.productImage');
 
-  console.log(productName);
+  // console.log(imageUrl);
+
+  // console.log(productName);
   //error message if nothing is selected
   let error = {
     noColor: 'Please choose a color!', 
@@ -85,18 +88,19 @@ cartButton.addEventListener('click', function() {
   }
 
   // adding the selection to the cart 
-  else addToCart(id, productName, chosenColor, itemQuantity);
+  else addToCart(id, imageUrl, productName, chosenColor, itemQuantity);
 
 });
 
-function addToCart (id, productName, chosenColor, itemQuantity) {
-
+function addToCart (id, imageUrl, productName, chosenColor, itemQuantity) {
+ console.log('imageUrl ', imageUrl);
   // checking if cart exists / assigning an empty array
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
   // creating a new object for the product selected
   const cartItem = {
     productId: id,
+    productImage: imageUrl.src,
     title: productName, 
     color: chosenColor,
     quantity: itemQuantity

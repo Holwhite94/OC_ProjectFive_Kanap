@@ -24,5 +24,5 @@ products.forEach((product) => {
                  <img src="${product.productImage}">
                 </div>`;
 });
-
+//fix the above holly haway what is that 
 console.log(html);

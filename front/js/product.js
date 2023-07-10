@@ -58,15 +58,15 @@ return response.json()})
 
 //adding an event listener to find value of color and quantity selected
 
-const cartButton = document.getElementsByTagName('button')[0];
+const cartButton = document.querySelector('button')[0]; 
 
 
 
 cartButton.addEventListener('click', function() {
 
-  const chosenColor = document.getElementsByTagName('select')[0].value;
-  const itemQuantity = document.getElementsByTagName('input')[0].value;
-  const productName = document.getElementById('title').innerText; 
+  const chosenColor = document.querySelector('select')[0].value;
+  const itemQuantity = document.querySelector('input')[0].value;
+  const productName = document.querySelector('title').innerText; 
   const imageUrl = document.querySelector('.productImage');
 
   // console.log(imageUrl);

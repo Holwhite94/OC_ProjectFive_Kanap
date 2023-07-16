@@ -2,27 +2,55 @@
 // getting the cart data from the local storage / parse data 
 const cartData = JSON.parse(localStorage.getItem('cart'));
 
-console.log(cartData);
-//adding data to an array of products - create an empty array and using a loop to push each product into the array 
-const products = []
-
-cartData.forEach((cartItem) => {
-    const product = cartItem;
-    products.push(product);
-});
-
-console.log(products);
-
+ if (cartData){
 // getting the section in which cart items will be displayed
-
-const cartSection = document.querySelector('.cart__items')
-let html = "";
-
-products.forEach((product) => {
-    html += `<article class="cart-item" data-id="${product.productId}" data-color="${product.color}">
+ const cartSection = document.querySelector('#cart__items');
+// updating the DOM with products in cart 
+ let html = "";
+  cartData.forEach((product) => {
+    html += `<article class="cart-item" data-id="${product.id}" data-color="${product.color}">
                 <div class="cart__item__img">
-                 <img src="${product.productImage}">
-                </div>`;
-});
-//fix the above holly haway what is that 
-console.log(html);
+                 <img src="${product.image}">
+                </div>
+                <div class="cart__item__content">
+                  <div class="cart__item__content__description">
+                    <h2>${product.title}</h2>
+                    <p>Color: ${product.color}</p>
+                    <p>Price: ${product.price}€</p>
+                  </div>
+                  <div class="cart__item__content__settings">
+                    <div class="cart__item__content__settings__quantity">
+                      <p>Quantity : </p>
+                      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+                    </div>
+                    <div class="cart__item__content__settings__delete">
+                      <p class="deleteItem">Delete</p>
+                    </div>
+                  </div>
+                </div>
+              </article>`;
+              
+            });
+
+cartSection.innerHTML = html;
+        
+}
+
+const totalItems = cartQuantity(cartData); 
+
+function cartQuantity (cart) {
+  let totalItems = 0;
+
+  for (let item of cart) {
+    totalItems += item.quantity;
+  };
+
+  return totalItems;
+};
+
+
+
+
+
+
+

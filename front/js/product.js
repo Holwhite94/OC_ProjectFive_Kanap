@@ -1,19 +1,16 @@
 
 const apiUrl = 'http://localhost:3000/api/products';
-
 const url = new URL(window.location.href);
-console.log(url);
+
 const searchParams = new URLSearchParams(url.search);
 const id = searchParams.get('id');
 
-// console.log(id);
 
 const data = fetch(`${apiUrl}/${id}`)
 .then(response => {
-// console.log(response);  
-return response.json()})
+ return response.json()})
 .then(data => {
-  console.log(data);
+  // console.log(data);
   const product = data;
 
   // UPDATING PRODUCT NAME WITHIN PROMISE CHAIN FOR ADDING TO CART FUNCTION 
@@ -24,7 +21,7 @@ return response.json()})
  
   const productImg = document.querySelector('.item__img');
 
-  console.log(productImg);
+  
   productImg.innerHTML = `<img class="productImage" src="${product.imageUrl}" alt="${product.altTxt}">`;
 
   // adding title
@@ -43,8 +40,6 @@ return response.json()})
   // adding color options
   const productColors = document.querySelector('select');
 
-  // console.log(productColors);
-
   let html = "";
   product.colors.forEach((color) => {
     html += `<option value="${color}">${color}</option>`;
@@ -52,26 +47,18 @@ return response.json()})
 
   productColors.innerHTML = html;
 });
+//adding an event listener to find value of color and quantity selected + including data to be used on the next page 
 
-
-
-
-//adding an event listener to find value of color and quantity selected
-
-const cartButton = document.querySelector('button')[0]; 
-
-
+const cartButton = document.querySelector('button'); 
 
 cartButton.addEventListener('click', function() {
 
-  const chosenColor = document.querySelector('select')[0].value;
-  const itemQuantity = document.querySelector('input')[0].value;
-  const productName = document.querySelector('title').innerText; 
+  const chosenColor = document.querySelector('select').value;
+  const itemQuantity = document.querySelector('input').value;
+  const productName = document.querySelector('#title').innerText;
+  console.log(productName);
   const imageUrl = document.querySelector('.productImage');
-
-  // console.log(imageUrl);
-
-  // console.log(productName);
+  const price = document.querySelector('#price');
   //error message if nothing is selected
   let error = {
     noColor: 'Please choose a color!', 
@@ -88,30 +75,41 @@ cartButton.addEventListener('click', function() {
   }
 
   // adding the selection to the cart 
-  else addToCart(id, imageUrl, productName, chosenColor, itemQuantity);
+  else addToCart(id, price, imageUrl, productName, chosenColor, itemQuantity);
 
 });
 
-function addToCart (id, imageUrl, productName, chosenColor, itemQuantity) {
- console.log('imageUrl ', imageUrl);
+function addToCart (id, price, imageUrl, productName, chosenColor, itemQuantity) {
+
   // checking if cart exists / assigning an empty array
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
+  // checking if item has already been added to the cart
+  const duplicateCartItem = cart.find((item) => {
+    return item.id === id && item.color === chosenColor;
+  });
+  // alerting user to duplicate item if it has been found 
+  if (duplicateCartItem){
+    alert('This item is already in the cart.');
+    return;
+  }
 
   // creating a new object for the product selected
   const cartItem = {
-    productId: id,
-    productImage: imageUrl.src,
+    id: id,
+    price: price.innerHTML, 
+    image: imageUrl.src,
     title: productName, 
     color: chosenColor,
     quantity: itemQuantity
   };
+
+  console.log(cartItem);
 
   // push used to add the product object to the cart 
   cart.push(cartItem);
 
   // storing product object in local storage/ using .stringify to convert back into a string to store
   localStorage.setItem('cart', JSON.stringify(cart));
-
-  console.log(cartItem);
-}
+};
 

@@ -1,9 +1,6 @@
-const apiUrl = 'http://localhost:3000/api/products';
-
-
+const apiUrl = "http://localhost:3000/api/products";
 
 // adding items to the homepage
-
 
 // fetch request to get products from the api
 
@@ -12,18 +9,17 @@ fetch(apiUrl)
     if (response.ok) {
       return response.json();
     } else {
-      throw new Error('Error: ' + response.status);
+      throw new Error("Error: " + response.status);
     }
   })
   .then((data) => {
     const products = data;
-    const items = document.querySelector('#items');
+    const items = document.querySelector("#items");
 
     const url = new URL(window.location.href);
-    url.searchParams.set('id', products.id);
+    url.searchParams.set("id", products.id);
 
-
-// appending product info to the DOM
+    // appending product info to the DOM
 
     let html = "";
 
@@ -39,18 +35,4 @@ fetch(apiUrl)
     });
 
     items.innerHTML = html;
-
- });
- 
-
-
-
- 
-
-
-
-
-
-
-
-
+  });

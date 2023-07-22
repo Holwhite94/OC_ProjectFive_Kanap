@@ -33,20 +33,63 @@ const cartData = JSON.parse(localStorage.getItem('cart'));
             });
 
 cartSection.innerHTML = html;
-        
-}
 
-const totalItems = cartQuantity(cartData); 
+// dealing with item quantity
+document.querySelectorAll(".itemQuantity").forEach(
+  item => {
+    totalQuantity += Number(item.value);
+    item.addEventListener("click",
+      () => {
+        // update the total quanity and price
+        // update the totalQuantity when user clicks on item's quantity
+        //totalQuantity
+        let tempQuantity = 0;
+        // grab all item values
+        document.querySelectorAll(".itemQuantity").forEach(
+          item => { tempQuantity += Number(item.value); }
+        )
+        // reference/hook/placeholder to the DOM element
+        document.querySelector("#totalQuantity").innerText = tempQuantity;
+      }
+      , false);
+  });
 
-function cartQuantity (cart) {
-  let totalItems = 0;
+// second step : push the total to the DOM
+document.querySelector("#totalQuantity").innerHTML = totalQuantity;
+// 
 
-  for (let item of cart) {
-    totalItems += item.quantity;
-  };
 
-  return totalItems;
+//dealing with delete button 1. grab button and add event listener 2. delete item closest when clicked 3. update DOM and Local storage 
+
+document.querySelectorAll(".deleteItem").forEach(
+  item => {
+    item.addEventListener("click", (event) => {
+     let deleteId = event.target.closest('.cart-item').dataset.id
+     console.log(deleteId); // locating the ID of the item to be deleted.  
+     //find the item with matching ID in cart data
+     let deleteItem = cartData.findIndex((item) => item.id === deleteId); // if not found will give value of -1
+     
+     if (deleteItem !== -1) { //check to see if a matching ID has been found
+      cartData.splice(deleteItem, 1); // remove from cart array
+      event.target.closest('.cart-item').remove(); // remove from DOM
+      localStorage.setItem("cartData", JSON.stringify(cartData)); // remove from local storage
+
+       // Update the total quantity with logic used above
+       let tempQuantity = 0;
+       document.querySelectorAll(".itemQuantity").forEach(item => {
+         tempQuantity += Number(item.value);
+       });
+       totalQuantity = tempQuantity;
+       document.querySelector("#totalQuantity").innerText = totalQuantity;
+     }
+    });
+  });
+
+
 };
+
+
+
 
 
 

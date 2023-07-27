@@ -1,12 +1,12 @@
 // getting the cart data from the local storage / parse data
-const cartData = JSON.parse(localStorage.getItem("cart"));
+const cart = JSON.parse(localStorage.getItem("cart"));
 
-if (cartData) {
+if (cart) {
   // getting the section in which cart items will be displayed
   const cartSection = document.querySelector("#cart__items");
   // updating the DOM with products in cart
   let html = "";
-  cartData.forEach((product) => {
+  cart.forEach((product) => {
     html += `<article class="cart-item" data-id="${product.id}" data-color="${product.color}">
                 <div class="cart__item__img">
                  <img src="${product.image}">
@@ -34,17 +34,21 @@ if (cartData) {
 
   //dealing with price
   let tempPrice = 0; //declaring temp price
-  cartData.forEach((product) => {
+  let tempQuantity = 0;
+  cart.forEach((product) => {
     //going through the array
     tempPrice += product.price * product.quantity; // temporary price is price x quantity
+    tempQuantity += Number(product.quantity);
   });
 
-  totalPrice = tempPrice; // updating total price
-  document.querySelector("#totalPrice").innerText = totalPrice; // pushing to DOM
+  console.log(totalQuantity);
+  document.querySelector("#totalQuantity").innerHTML = tempQuantity;
+  // totalPrice = tempPrice; // updating total price
+  document.querySelector("#totalPrice").innerText = tempPrice; // pushing to DOM
 
   // dealing with item quantity
   document.querySelectorAll(".itemQuantity").forEach((item) => {
-    totalQuantity += Number(item.value);
+   let totalQuantity = Number(item.value);
     item.addEventListener(
       "click",
       () => {
@@ -54,13 +58,14 @@ if (cartData) {
           tempQuantity += Number(item.value);
         });
         // reference/hook/placeholder to the DOM element
+        console.log('hello');
         document.querySelector("#totalQuantity").innerText = tempQuantity;
       },
-      false
+      
     );
   });
+  
 
-  document.querySelector("#totalQuantity").innerHTML = totalQuantity;
 
   //dealing with delete button 1. grab button and add event listener 2. delete item closest when clicked 3. update DOM and Local storage
 
@@ -69,13 +74,13 @@ if (cartData) {
       let deleteId = event.target.closest(".cart-item").dataset.id;
       console.log(deleteId); // locating the ID of the item to be deleted.
       //find the item with matching ID in cart data
-      let deleteItem = cartData.findIndex((item) => item.id === deleteId); // if not found will give value of -1
+      let deleteItem = cart.findIndex((item) => item.id === deleteId); // if not found will give value of -1
 
       if (deleteItem !== -1) {
         //check to see if a matching ID has been found
-        cartData.splice(deleteItem, 1); // remove from cart array
+        cart.splice(deleteItem, 1); // remove from cart array
         event.target.closest(".cart-item").remove(); // remove from DOM
-        localStorage.setItem("cartData", JSON.stringify(cartData)); // remove from local storage
+        localStorage.setItem("cart", JSON.stringify(cart)); // remove from local storage
 
         // Update the total quantity with logic used above
         let tempQuantity = 0;
@@ -86,7 +91,7 @@ if (cartData) {
         document.querySelector("#totalQuantity").innerText = totalQuantity;
 
         let tempPrice = 0;
-        cartData.forEach((product) => {
+        cart.forEach((product) => {
           tempPrice += product.price * product.quantity;
         });
         totalPrice = tempPrice;
@@ -96,14 +101,42 @@ if (cartData) {
   });
 }
 
+const orderButton = document.querySelector('#order')
+  orderButton.addEventListener("click", () => {
+    validateForm();
+  });
+
+
+console.log(orderButton);
+
 // FORM steps
+
+// grab all input form values 
+function validateForm () {
+const firstName = document.querySelector('#firstName').value;
+const lastName = document.querySelector('#lastName').value;
+const address = document.querySelector('#address').value;
+const city = document.querySelector('#city').value;
+const email = document.querySelector('#email').value;
+
+console.log(firstName); 
+
+// grab all error messages 
+const firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
+const lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
+const addressErrorMsg = document.querySelector('#addressErrorMsg');
+const cityErrorMsg = document.querySelector('#cityErrorMsg');
+const emailErrorMsg = document.querySelector('#emailErrorMsg');
+
+console.log(emailErrorMsg);
+
+
+};
 
 
 // validate form before saving (regex)
 
-function validateForm () {
-  
-}
+
 
 
 

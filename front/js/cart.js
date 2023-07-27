@@ -107,8 +107,6 @@ const orderButton = document.querySelector('#order')
   });
 
 
-console.log(orderButton);
-
 // FORM steps
 
 // grab all input form values 
@@ -122,17 +120,93 @@ const email = document.querySelector('#email').value;
 console.log(firstName); 
 
 // grab all error messages 
+
 const firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
 const lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
 const addressErrorMsg = document.querySelector('#addressErrorMsg');
 const cityErrorMsg = document.querySelector('#cityErrorMsg');
 const emailErrorMsg = document.querySelector('#emailErrorMsg');
 
+
 console.log(emailErrorMsg);
 
+// regex 
+const firstNameRegex = /^[a-zA-Z]+$/; 
+const lastNameRegex = /^[a-zA-Z]+$/;
+const addressRegex = /^[a-zA-Z0-9\s]+$/;
+const cityRegex = /^[a-zA-Z]+$/;
+const emailRegex = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+\.[a-zA-Z]+$/;
 
+// validate 
+
+if (!firstNameRegex.text(firstName)) {
+  return firstNameErrorMsg.innerText = "Enter a valid name!"; 
+}
+
+if (!lastNameRegex.text(lastName)){
+  return lastNameErrorMsg.innerText = "Enter a valid name!";
+}
+
+if (!addressRegex.test(address)){
+  return addressErrorMsg.innerText = "Enter a valid address!";
+}
+
+if (!cityRegex.test(city)){
+  return cityErrorMsg.innerText = "Enter a valid city!";
+}
+
+if (!emailRegex.test(email)){
+  return emailErrorMsg.innerText = "Enter a valid email!";
+}
+
+else () {
+  console.log("validated"); // replace this with POST function 
+}
 };
 
+function postOrder () {
+
+}
+
+// const firstNameValidate = firstNameRegex.test(firstName)
+// if (firstNameValidate) {
+//   console.log("validated")
+// }
+// else {
+//   return firstNameErrorMsg.innerText = "Enter a valid name!"; 
+// };
+
+// const lastNameValidate = lastNameRegex.test(lastName)
+// if (lastNameValidate) {
+//   console.log("validated")
+// }
+// else {
+//   return lastNameErrorMsg.innerText = "Enter a valid name!";
+// };
+
+// const addressValidate = addressRegex.test(address)
+// if (addressValidate) {
+//   console.log("validated")
+// }
+// else {
+//   return addressErrorMsg.innerText = "Enter a valid address!";
+// };
+
+// const cityValidate = cityRegex.test(city);
+// if (cityValidate) {
+//   console.log("validated")
+// }
+// else {
+//   return cityErrorMsg.innerText = "Enter a valid city!";
+// };
+
+// const emailValidate = emailRegex.test(email)
+// if (emailValidate) {
+//   console.log("validated")
+// }
+// else {
+//   return emailErrorMsg.innerText = "Enter a valid email!"; 
+// }
 
 // validate form before saving (regex)
 

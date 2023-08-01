@@ -183,11 +183,32 @@ function postOrder () {
   }
   let orderCart = cart; // accessing the cart
 
-  let order = {validatedContact, orderCart}; 
+  let order = {validatedContact, orderCart}; // adding both to one variable.
+  
+  console.log(order); // confirming both available
+// console.log(validatedContact); 
+//    console.log(orderCart);
 
+// // run or create fetch post request and pass the validated object literal to the /order URL
+fetch (apiUrl + "order", // endpoint
+{ method: "POST",
+    headers: {
+      Accept: "application/json", // accepts JSON in return
+      "Content-Type": "application/json", // sent in JSON
+    },
 
-   console.log(validatedContact); // confirming both available within function 
-   console.log(orderCart);
-// run or create fetch post request and pass the validated object literal to the /order URL
-}
+    body: JSON.stringify(order) // adding the order to the body of the post request
+   })
+   .then((response) => response.json()) // parse
+
+   .then((data) => {
+
+    localStorage.removeItem("cart"); // remove order from the local storage 
+    window.location.href = "confirmation.html" + "?id=" + data.orderId })
+
+   .catch(error => {
+    console.error("Error:", error); // handle errors
+   });
+
+};
 

@@ -1,6 +1,8 @@
 // getting the cart data from the local storage / parse data
 const cart = JSON.parse(localStorage.getItem("cart"));
 
+const apiUrl = "http://localhost:3000/api/products"; // adding api URL for POST request 
+
 if (cart) {
   // getting the section in which cart items will be displayed
   const cartSection = document.querySelector("#cart__items");
@@ -175,7 +177,7 @@ if(valid == true) {
 
 function postOrder () {
   let validatedContact = { // creating a contact object 
-   firstName: firstName.value,
+   firstName: firstName,
    lastName: lastName.value,
    address: address.value,
    city: city.value,
@@ -204,7 +206,7 @@ fetch (apiUrl + "order", // endpoint
    .then((data) => {
 
     localStorage.removeItem("cart"); // remove order from the local storage 
-    window.location.href = "confirmation.html" + "?id=" + data.orderId })
+    })
 
    .catch(error => {
     console.error("Error:", error); // handle errors

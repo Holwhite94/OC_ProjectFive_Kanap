@@ -168,31 +168,44 @@ if (!emailRegex.test(email)){
 }
 
 if(valid == true) {
+  
+  let validatedContact = { // creating a contact object 
+    firstName: firstName,
+    lastName: lastName,  
+    address: address,
+    city: city,
+    email: email
+   }
+
+  console.log(validatedContact);
+
   console.log("validated");
-  postOrder();
+
+  postOrder(validatedContact, cart);
 }
 };
 
 
 
-function postOrder () {
-  let validatedContact = { // creating a contact object 
-   firstName: firstName,
-   lastName: lastName.value,
-   address: address.value,
-   city: city.value,
-   email: email.value
-  }
-  let orderCart = cart; // accessing the cart
+function postOrder (validatedContact, cart) {
 
-  let order = {validatedContact, orderCart}; // adding both to one variable.
+  const cartId = []
+  cart.forEach((product) => {
+    cartId.push(product.id);
+  });
+
+
+  let order = {
+    validatedContact: {...validatedContact}, // i think the structure of this is bvreaking the POST request somehow 
+    cart: cartIds, 
+  }; // adding both to one variable
   
-  console.log(order); // confirming both available
-// console.log(validatedContact); 
-//    console.log(orderCart);
+  
+  console.log(order);
+   // confirming both available
 
 // // run or create fetch post request and pass the validated object literal to the /order URL
-fetch (apiUrl + "order", // endpoint
+fetch (apiUrl + "/order", // endpoint
 { method: "POST",
     headers: {
       Accept: "application/json", // accepts JSON in return
@@ -203,10 +216,10 @@ fetch (apiUrl + "order", // endpoint
    })
    .then((response) => response.json()) // parse
 
-   .then((data) => {
+  //  .then((data) => {
 
-    localStorage.removeItem("cart"); // remove order from the local storage 
-    })
+  //   localStorage.removeItem("cart"); // remove order from the local storage 
+  //   })
 
    .catch(error => {
     console.error("Error:", error); // handle errors

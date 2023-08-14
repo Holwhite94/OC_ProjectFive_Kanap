@@ -1,8 +1,7 @@
 // getting the cart data from the local storage / parse data
 const cart = JSON.parse(localStorage.getItem("cart"));
 
-const apiUrl = "http://localhost:3000/api/products"; // adding api URL for POST request 
-
+// if there is something in the cart: inserting the product into the DOM and working out quantity and price.
 if (cart) {
   // getting the section in which cart items will be displayed
   const cartSection = document.querySelector("#cart__items");
@@ -50,31 +49,22 @@ if (cart) {
 
   // dealing with item quantity
   document.querySelectorAll(".itemQuantity").forEach((item) => {
-   let totalQuantity = Number(item.value);
-    item.addEventListener(
-      "click",
-      () => {
-        let tempQuantity = 0;
-        // grab all item values
-        document.querySelectorAll(".itemQuantity").forEach((item) => {
-          tempQuantity += Number(item.value);
-        });
-        // reference/hook/placeholder to the DOM element
-        console.log('hello');
-        document.querySelector("#totalQuantity").innerText = tempQuantity;
-      },
-      
-    );
+    let totalQuantity = Number(item.value);
+    item.addEventListener("click", () => {
+      let tempQuantity = 0;
+      // grab all item values
+      document.querySelectorAll(".itemQuantity").forEach((item) => {
+        tempQuantity += Number(item.value);
+      });
+      document.querySelector("#totalQuantity").innerText = tempQuantity; // pushing to DOM
+    });
   });
-  
 
-
-  //dealing with delete button 1. grab button and add event listener 2. delete item closest when clicked 3. update DOM and Local storage
-
+  //dealing with delete button
   document.querySelectorAll(".deleteItem").forEach((item) => {
     item.addEventListener("click", (event) => {
-      let deleteId = event.target.closest(".cart-item").dataset.id;
-      console.log(deleteId); // locating the ID of the item to be deleted.
+      let deleteId = event.target.closest(".cart-item").dataset.id; // locating the ID of the item to be deleted.
+      console.log(deleteId);
       //find the item with matching ID in cart data
       let deleteItem = cart.findIndex((item) => item.id === deleteId); // if not found will give value of -1
 
@@ -103,127 +93,125 @@ if (cart) {
   });
 }
 
-const orderButton = document.querySelector('#order')
-  orderButton.addEventListener("click", validateForm);
+// adding event listener to order button and calling validateForm function when clicked
+const orderButton = document.querySelector("#order");
+orderButton.addEventListener("click", validateForm);
 
+// function to validate the form: gets input value's, uses Regex to check values, if valid creates contact object and calls postOrder function
+function validateForm(event) {
+  event.preventDefault(); // prevent refresh
+  // grab values
+  const firstName = document.querySelector("#firstName").value;
+  const lastName = document.querySelector("#lastName").value;
+  const address = document.querySelector("#address").value;
+  const city = document.querySelector("#city").value;
+  const email = document.querySelector("#email").value;
 
-// FORM steps
+  console.log(firstName);
 
-// grab all input form values 
-function validateForm (event) {
-event.preventDefault();
+  // grab all error messages
 
-const firstName = document.querySelector('#firstName').value;
-const lastName = document.querySelector('#lastName').value;
-const address = document.querySelector('#address').value;
-const city = document.querySelector('#city').value;
-const email = document.querySelector('#email').value;
+  const firstNameErrorMsg = document.querySelector("#firstNameErrorMsg");
+  const lastNameErrorMsg = document.querySelector("#lastNameErrorMsg");
+  const addressErrorMsg = document.querySelector("#addressErrorMsg");
+  const cityErrorMsg = document.querySelector("#cityErrorMsg");
+  const emailErrorMsg = document.querySelector("#emailErrorMsg");
 
-console.log(firstName); 
+  console.log(emailErrorMsg);
 
-// grab all error messages 
+  // regex
+  const firstNameRegex = /^[a-zA-Z]+$/;
+  const lastNameRegex = /^[a-zA-Z]+$/;
+  const addressRegex = /^[a-zA-Z0-9\s]+$/;
+  const cityRegex = /^[a-zA-Z]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-const firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
-const lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
-const addressErrorMsg = document.querySelector('#addressErrorMsg');
-const cityErrorMsg = document.querySelector('#cityErrorMsg');
-const emailErrorMsg = document.querySelector('#emailErrorMsg');
+  // validate
+  let valid = true;
 
+  if (!firstNameRegex.test(firstName)) {
+    valid = false;
+    firstNameErrorMsg.innerText = "Enter a valid name!";
+  }
 
-console.log(emailErrorMsg);
+  if (!lastNameRegex.test(lastName)) {
+    valid = false;
+    lastNameErrorMsg.innerText = "Enter a valid name!";
+  }
 
-// regex 
-const firstNameRegex = /^[a-zA-Z]+$/;
-const lastNameRegex = /^[a-zA-Z]+$/;
-const addressRegex = /^[a-zA-Z0-9\s]+$/;
-const cityRegex = /^[a-zA-Z]+$/;
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!addressRegex.test(address)) {
+    valid = false;
+    addressErrorMsg.innerText = "Enter a valid address!";
+  }
 
-// validate 
-let valid = true;
+  if (!cityRegex.test(city)) {
+    valid = false;
+    cityErrorMsg.innerText = "Enter a valid city!";
+  }
 
-if (!firstNameRegex.test(firstName)) {
-  valid = false;
-  firstNameErrorMsg.innerText = "Enter a valid name!"; 
-}
-
-if (!lastNameRegex.test(lastName)){
-  valid = false;
-  lastNameErrorMsg.innerText = "Enter a valid name!";
-}
-
-if (!addressRegex.test(address)){
-  valid = false;
-  addressErrorMsg.innerText = "Enter a valid address!";
-}
-
-if (!cityRegex.test(city)){
-  valid = false;
-   cityErrorMsg.innerText = "Enter a valid city!";
-}
-
-if (!emailRegex.test(email)){
-  valid = false;
+  if (!emailRegex.test(email)) {
+    valid = false;
     emailErrorMsg.innerText = "Enter a valid email!";
+  }
+
+  if (valid == true) {
+    let validatedContact = {
+      // creating a contact object
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      city: city,
+      email: email,
+    };
+
+    console.log(validatedContact);
+
+    console.log("validated");
+
+    postOrder(validatedContact, cart);
+  }
 }
 
-if(valid == true) {
-  
-  let validatedContact = { // creating a contact object 
-    firstName: firstName,
-    lastName: lastName,  
-    address: address,
-    city: city,
-    email: email
-   }
+// defining api URL for POST request
+const apiUrl = "http://localhost:3000/api/products";
 
-  console.log(validatedContact);
-
-  console.log("validated");
-
-  postOrder(validatedContact, cart);
-}
-};
-
-
-
-function postOrder (validatedContact, cart) {
-
-  const cartId = []
+// function to create an order object with product ID and contact object created previously, then sending object using POST
+function postOrder(validatedContact, cart) {
+  const cartId = [];
   cart.forEach((product) => {
     cartId.push(product.id);
   });
 
-
   let order = {
-    validatedContact: {...validatedContact}, // i think the structure of this is bvreaking the POST request somehow 
-    cart: cartIds, 
+    contact: { ...validatedContact },
+    products: cartId,
   }; // adding both to one variable
-  
-  
+
   console.log(order);
-   // confirming both available
+  // confirming both available
 
-// // run or create fetch post request and pass the validated object literal to the /order URL
-fetch (apiUrl + "/order", // endpoint
-{ method: "POST",
-    headers: {
-      Accept: "application/json", // accepts JSON in return
-      "Content-Type": "application/json", // sent in JSON
-    },
+  fetch(
+    apiUrl + "/order", // endpoint
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json", // accepts JSON in return
+        "Content-Type": "application/json", // sent in JSON
+      },
 
-    body: JSON.stringify(order) // adding the order to the body of the post request
-   })
-   .then((response) => response.json()) // parse
+      body: JSON.stringify(order), // adding the order to the body of the post request
+    }
+  )
+    .then((response) => response.json()) // parse
 
-  //  .then((data) => {
+    .then((data) => {
+      window.location.href =
+        "http://127.0.0.1:5501/front/html/confirmation.html?orderId=" +
+        data.orderId; // setting search param
+      localStorage.removeItem("cart"); // remove order from the local storage
+    })
 
-  //   localStorage.removeItem("cart"); // remove order from the local storage 
-  //   })
-
-   .catch(error => {
-    console.error("Error:", error); // handle errors
-   });
-
-};
-
+    .catch((error) => {
+      console.error("Error:", error); // handle errors
+    });
+}

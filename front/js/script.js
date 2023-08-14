@@ -2,7 +2,7 @@ const apiUrl = "http://localhost:3000/api/products";
 
 // adding items to the homepage
 
-// fetch request to get products from the api
+// fetch request which asks for the products from the API
 
 fetch(apiUrl)
   .then((response) => {
@@ -19,7 +19,7 @@ fetch(apiUrl)
     const url = new URL(window.location.href);
     url.searchParams.set("id", products.id);
 
-    // appending product info to the DOM
+    // inserting the products received from the API request to the DOM
 
     let html = "";
 

@@ -1,15 +1,17 @@
+
+// getting the value of the ID parameter from the URL
 const apiUrl = "http://localhost:3000/api/products";
 const url = new URL(window.location.href);
-
 const searchParams = new URLSearchParams(url.search);
 const id = searchParams.get("id");
 
+
+// fetch request using the ID parameter to retrieve the remaining product info to be displayed on the product page
 const data = fetch(`${apiUrl}/${id}`)
   .then((response) => {
     return response.json();
   })
   .then((data) => {
-    // console.log(data);
     const product = data;
 
     // UPDATING PRODUCT NAME WITHIN PROMISE CHAIN FOR ADDING TO CART FUNCTION
@@ -45,8 +47,9 @@ const data = fetch(`${apiUrl}/${id}`)
 
     productColors.innerHTML = html;
   });
-//adding an event listener to find value of color and quantity selected + including data to be used on the next page
 
+
+//adding an event listener to find value of color and quantity selected + including data to be used on the next page
 const cartButton = document.querySelector("button");
 
 cartButton.addEventListener("click", function () {
@@ -56,6 +59,7 @@ cartButton.addEventListener("click", function () {
   console.log(productName);
   const imageUrl = document.querySelector(".productImage");
   const price = document.querySelector("#price");
+
   //error message if nothing is selected
   let error = {
     noColor: "Please choose a color!",
@@ -71,10 +75,12 @@ cartButton.addEventListener("click", function () {
     return;
   }
 
-  // adding the selection to the cart
+  // calling add to cart function if there are no errors 
   else addToCart(id, price, imageUrl, productName, chosenColor, itemQuantity);
 });
 
+
+// function which creates 'cart object' with 6 parameters and sores in local storage 
 function addToCart(
   id,
   price,

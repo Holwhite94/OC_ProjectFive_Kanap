@@ -42,7 +42,6 @@ if (cart) {
     tempQuantity += Number(product.quantity);
   });
 
-  console.log(totalQuantity);
   document.querySelector("#totalQuantity").innerHTML = tempQuantity;
   // totalPrice = tempPrice; // updating total price
   document.querySelector("#totalPrice").innerText = tempPrice; // pushing to DOM
@@ -64,7 +63,7 @@ if (cart) {
   document.querySelectorAll(".deleteItem").forEach((item) => {
     item.addEventListener("click", (event) => {
       let deleteId = event.target.closest(".cart-item").dataset.id; // locating the ID of the item to be deleted.
-      console.log(deleteId);
+
       //find the item with matching ID in cart data
       let deleteItem = cart.findIndex((item) => item.id === deleteId); // if not found will give value of -1
 
@@ -107,7 +106,6 @@ function validateForm(event) {
   const city = document.querySelector("#city").value;
   const email = document.querySelector("#email").value;
 
-  console.log(firstName);
 
   // grab all error messages
 
@@ -117,7 +115,6 @@ function validateForm(event) {
   const cityErrorMsg = document.querySelector("#cityErrorMsg");
   const emailErrorMsg = document.querySelector("#emailErrorMsg");
 
-  console.log(emailErrorMsg);
 
   // regex
   const firstNameRegex = /^[a-zA-Z]+$/;
@@ -164,10 +161,6 @@ function validateForm(event) {
       email: email,
     };
 
-    console.log(validatedContact);
-
-    console.log("validated");
-
     postOrder(validatedContact, cart);
   }
 }
@@ -186,9 +179,6 @@ function postOrder(validatedContact, cart) {
     contact: { ...validatedContact },
     products: cartId,
   }; // adding both to one variable
-
-  console.log(order);
-  // confirming both available
 
   fetch(
     apiUrl + "/order", // endpoint

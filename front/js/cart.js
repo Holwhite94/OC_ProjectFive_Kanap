@@ -33,29 +33,32 @@ if (cart) {
 
   cartSection.innerHTML = html;
 
-  //dealing with price
-  let tempPrice = 0; //declaring temp price
+  // declare temp price and quantity
+  let tempPrice = 0; 
   let tempQuantity = 0;
+  
+  // Calculate initial total price and total quantity
   cart.forEach((product) => {
-    //going through the array
-    tempPrice += product.price * product.quantity; // temporary price is price x quantity
+    tempPrice += product.price * product.quantity;
     tempQuantity += Number(product.quantity);
   });
-
+  
+  // Update total quantity and total price in DOM
   document.querySelector("#totalQuantity").innerHTML = tempQuantity;
-  // totalPrice = tempPrice; // updating total price
-  document.querySelector("#totalPrice").innerText = tempPrice; // pushing to DOM
-
-  // dealing with item quantity
+  document.querySelector("#totalPrice").innerText = tempPrice;
+  
+  // Event listener to deal with quantity changes
   document.querySelectorAll(".itemQuantity").forEach((item) => {
-    let totalQuantity = Number(item.value);
-    item.addEventListener("click", () => {
-      let tempQuantity = 0;
-      // grab all item values
+    item.addEventListener("input", () => {
+      let newTempQuantity = 0;
+      
+      // Recalculate total quantity 
       document.querySelectorAll(".itemQuantity").forEach((item) => {
-        tempQuantity += Number(item.value);
+        newTempQuantity += Number(item.value);
       });
-      document.querySelector("#totalQuantity").innerText = tempQuantity; // pushing to DOM
+      
+      // Update total quantiy in the DOM
+      document.querySelector("#totalQuantity").innerText = newTempQuantity;
     });
   });
 
@@ -78,15 +81,13 @@ if (cart) {
         document.querySelectorAll(".itemQuantity").forEach((item) => {
           tempQuantity += Number(item.value);
         });
-        totalQuantity = tempQuantity;
-        document.querySelector("#totalQuantity").innerText = totalQuantity;
+        document.querySelector("#totalQuantity").innerText = tempQuantity;
 
         let tempPrice = 0;
         cart.forEach((product) => {
           tempPrice += product.price * product.quantity;
         });
-        totalPrice = tempPrice;
-        document.querySelector("#totalPrice").innerText = totalPrice;
+        document.querySelector("#totalPrice").innerText = tempPrice;
       }
     });
   });
@@ -154,11 +155,11 @@ function validateForm(event) {
   if (valid == true) {
     let validatedContact = {
       // creating a contact object
-      firstName: firstName,
-      lastName: lastName,
-      address: address,
-      city: city,
-      email: email,
+    firstName,
+    lastName,
+    address,
+    city,
+    email,
     };
 
     postOrder(validatedContact, cart);
@@ -180,6 +181,8 @@ function postOrder(validatedContact, cart) {
     products: cartId,
   }; // adding both to one variable
 
+  const orderUrl = "http://127.0.0.1:5501/front/html/confirmation.html"
+
   fetch(
     apiUrl + "/order", // endpoint
     {
@@ -195,13 +198,12 @@ function postOrder(validatedContact, cart) {
     .then((response) => response.json()) // parse
 
     .then((data) => {
-      window.location.href =
-        "http://127.0.0.1:5501/front/html/confirmation.html?orderId=" +
-        data.orderId; // setting search param
+      window.location.href = `${orderUrl}?orderId=${data.orderId}`;// setting search param
       localStorage.removeItem("cart"); // remove order from the local storage
     })
 
     .catch((error) => {
-      console.error("Error:", error); // handle errors
+      alert("Error", error);// handle errors
+       
     });
 }

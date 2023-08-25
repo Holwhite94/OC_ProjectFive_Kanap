@@ -1,27 +1,39 @@
 // getting the cart data from the local storage / parse data
 const cart = JSON.parse(localStorage.getItem("cart"));
+const apiUrl = "http://localhost:3000/api/products";
+let products = [];
 
-// if there is something in the cart: inserting the product into the DOM and working out quantity and price.
-if (cart) {
-  // getting the section in which cart items will be displayed
-  const cartSection = document.querySelector("#cart__items");
-  // updating the DOM with products in cart
-  let html = "";
-  cart.forEach((product) => {
-    html += `<article class="cart-item" data-id="${product.id}" data-color="${product.color}">
+// Fetch products from the API so we can get price
+fetch(apiUrl)
+  .then((response) => response.json())
+  .then((data) => {
+    products = data;
+
+    // if there is something in the cart: inserting the product into the DOM and working out quantity and price.
+    if (cart) {
+      // getting the section in which cart items will be displayed
+      const cartSection = document.querySelector("#cart__items");
+      // updating the DOM with products in cart
+      let html = "";
+      cart.forEach((cartItem) => {
+        const matchingProduct = products.find(  // matching the cart item ID to the product ID from API so we can access the price
+          (product) => cartItem.id === product._id
+        );
+        if (matchingProduct) {
+          html += `<article class="cart-item" data-id="${cartItem.id}" data-color="${cartItem.color}">
                 <div class="cart__item__img">
-                 <img src="${product.image}">
+                 <img src="${cartItem.image}">
                 </div>
                 <div class="cart__item__content">
                   <div class="cart__item__content__description">
-                    <h2>${product.title}</h2>
-                    <p>Color: ${product.color}</p>
-                    <p>Price: ${product.price}€</p>
+                    <h2>${cartItem.title}</h2>
+                    <p>Color: ${cartItem.color}</p>
+                    <p>Price: ${matchingProduct.price}€</p>
                   </div>
                   <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
                       <p>Quantity : </p>
-                      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+                      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cartItem.quantity}">
                     </div>
                     <div class="cart__item__content__settings__delete">
                       <p class="deleteItem">Delete</p>
@@ -29,69 +41,94 @@ if (cart) {
                   </div>
                 </div>
               </article>`;
-  });
 
-  cartSection.innerHTML = html;
-
-  // declare temp price and quantity
-  let tempPrice = 0; 
-  let tempQuantity = 0;
-  
-  // Calculate initial total price and total quantity
-  cart.forEach((product) => {
-    tempPrice += product.price * product.quantity;
-    tempQuantity += Number(product.quantity);
-  });
-  
-  // Update total quantity and total price in DOM
-  document.querySelector("#totalQuantity").innerHTML = tempQuantity;
-  document.querySelector("#totalPrice").innerText = tempPrice;
-  
-  // Event listener to deal with quantity changes
-  document.querySelectorAll(".itemQuantity").forEach((item) => {
-    item.addEventListener("input", () => {
-      let newTempQuantity = 0;
-      
-      // Recalculate total quantity 
-      document.querySelectorAll(".itemQuantity").forEach((item) => {
-        newTempQuantity += Number(item.value);
+          cartSection.innerHTML = html;
+        }
       });
-      
-      // Update total quantiy in the DOM
-      document.querySelector("#totalQuantity").innerText = newTempQuantity;
-    });
-  });
+    }
 
-  //dealing with delete button
-  document.querySelectorAll(".deleteItem").forEach((item) => {
-    item.addEventListener("click", (event) => {
-      let deleteId = event.target.closest(".cart-item").dataset.id; // locating the ID of the item to be deleted.
+    // declare temp price and quantity
+    let totalQuantity = 0;
+    let totalPrice = 0;
 
-      //find the item with matching ID in cart data
-      let deleteItem = cart.findIndex((item) => item.id === deleteId); // if not found will give value of -1
+    cart.forEach((cartItem) => {
+      const matchingProduct = products.find(
+        (product) => cartItem.id === product._id
+      );
 
-      if (deleteItem !== -1) {
-        //check to see if a matching ID has been found
-        cart.splice(deleteItem, 1); // remove from cart array
-        event.target.closest(".cart-item").remove(); // remove from DOM
-        localStorage.setItem("cart", JSON.stringify(cart)); // remove from local storage
-
-        // Update the total quantity with logic used above
-        let tempQuantity = 0;
-        document.querySelectorAll(".itemQuantity").forEach((item) => {
-          tempQuantity += Number(item.value);
-        });
-        document.querySelector("#totalQuantity").innerText = tempQuantity;
-
-        let tempPrice = 0;
-        cart.forEach((product) => {
-          tempPrice += product.price * product.quantity;
-        });
-        document.querySelector("#totalPrice").innerText = tempPrice;
+      if (matchingProduct) {
+        totalQuantity += Number(cartItem.quantity);
+        totalPrice += matchingProduct.price * cartItem.quantity;
       }
     });
+
+    // Update total quantity and total price in DOM
+
+    document.querySelector("#totalQuantity").innerText = totalQuantity;
+    document.querySelector("#totalPrice").innerText = totalPrice;
+
+    // Event listener to handle quantity changes
+    document.querySelectorAll(".itemQuantity").forEach((item) => {
+      item.addEventListener("input", () => {
+        // Recalculate and update quantity and price
+        let newTotalQuantity = 0;
+        let newTotalPrice = 0;
+
+        document.querySelectorAll(".itemQuantity").forEach((item) => {
+          const cartItem = cart.find(
+            (cartItem) => cartItem.id === item.closest(".cart-item").dataset.id
+          );
+          const matchingProduct = products.find(
+            (product) => cartItem.id === product._id
+          );
+
+          if (matchingProduct) {
+            const quantity = Number(item.value);
+            newTotalQuantity += quantity;
+            newTotalPrice += matchingProduct.price * quantity;
+            cartItem.quantity = quantity;
+          }
+        });
+
+        document.querySelector("#totalQuantity").innerText = newTotalQuantity;
+        document.querySelector("#totalPrice").innerText = newTotalPrice;
+      });
+    });
+
+    // Event listener to handle delete button clicks
+    document.querySelectorAll(".deleteItem").forEach((item) => {
+      item.addEventListener("click", (event) => {
+        const deleteId = event.target.closest(".cart-item").dataset.id;
+        const deleteItem = cart.findIndex(
+          (cartItem) => cartItem.id === deleteId
+        );
+
+        if (deleteItem !== -1) {
+          cart.splice(deleteItem, 1);
+          event.target.closest(".cart-item").remove();
+          localStorage.setItem("cart", JSON.stringify(cart));
+
+          // Update total quantity and total price after deletion
+          let newTotalQuantity = 0;
+          let newTotalPrice = 0;
+
+          cart.forEach((cartItem) => {
+            const matchingProduct = products.find(
+              (product) => cartItem.id === product._id
+            );
+
+            if (matchingProduct) {
+              newTotalQuantity += Number(cartItem.quantity);
+              newTotalPrice += matchingProduct.price * cartItem.quantity;
+            }
+          });
+
+          document.querySelector("#totalQuantity").innerText = newTotalQuantity;
+          document.querySelector("#totalPrice").innerText = newTotalPrice;
+        }
+      });
+    });
   });
-}
 
 // adding event listener to order button and calling validateForm function when clicked
 const orderButton = document.querySelector("#order");
@@ -107,7 +144,6 @@ function validateForm(event) {
   const city = document.querySelector("#city").value;
   const email = document.querySelector("#email").value;
 
-
   // grab all error messages
 
   const firstNameErrorMsg = document.querySelector("#firstNameErrorMsg");
@@ -115,7 +151,6 @@ function validateForm(event) {
   const addressErrorMsg = document.querySelector("#addressErrorMsg");
   const cityErrorMsg = document.querySelector("#cityErrorMsg");
   const emailErrorMsg = document.querySelector("#emailErrorMsg");
-
 
   // regex
   const firstNameRegex = /^[a-zA-Z]+$/;
@@ -155,25 +190,22 @@ function validateForm(event) {
   if (valid == true) {
     let validatedContact = {
       // creating a contact object
-    firstName,
-    lastName,
-    address,
-    city,
-    email,
+      firstName,
+      lastName,
+      address,
+      city,
+      email,
     };
 
     postOrder(validatedContact, cart);
   }
 }
 
-// defining api URL for POST request
-const apiUrl = "http://localhost:3000/api/products";
-
 // function to create an order object with product ID and contact object created previously, then sending object using POST
 function postOrder(validatedContact, cart) {
   const cartId = [];
-  cart.forEach((product) => {
-    cartId.push(product.id);
+  cart.forEach((cartItem) => {
+    cartId.push(cartItem.id);
   });
 
   let order = {
@@ -181,7 +213,7 @@ function postOrder(validatedContact, cart) {
     products: cartId,
   }; // adding both to one variable
 
-  const orderUrl = "http://127.0.0.1:5501/front/html/confirmation.html"
+  const orderUrl = "http://127.0.0.1:5501/front/html/confirmation.html";
 
   fetch(
     apiUrl + "/order", // endpoint
@@ -198,12 +230,11 @@ function postOrder(validatedContact, cart) {
     .then((response) => response.json()) // parse
 
     .then((data) => {
-      window.location.href = `${orderUrl}?orderId=${data.orderId}`;// setting search param
+      window.location.href = `${orderUrl}?orderId=${data.orderId}`; // setting search param
       localStorage.removeItem("cart"); // remove order from the local storage
     })
 
     .catch((error) => {
-      alert("Error", error);// handle errors
-       
+      alert("Error", error); // handle errors
     });
 }

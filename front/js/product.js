@@ -54,7 +54,7 @@ cartButton.addEventListener("click", function () {
   const itemQuantity = document.querySelector("input").value;
   const productName = document.querySelector("#title").innerText;
   const imageUrl = document.querySelector(".productImage");
-  const price = document.querySelector("#price");
+  
 
   //error message if nothing is selected
   let error = {
@@ -72,13 +72,12 @@ cartButton.addEventListener("click", function () {
   }
 
   // calling add to cart function if there are no errors
-  else addToCart(id, price, imageUrl, productName, chosenColor, itemQuantity);
+  else addToCart(id, imageUrl, productName, chosenColor, itemQuantity);
 });
 
 // function which creates 'cart object' with 6 parameters and sores in local storage
 function addToCart(
   id,
-  price,
   imageUrl,
   productName,
   chosenColor,
@@ -100,7 +99,6 @@ function addToCart(
   // creating a new object for the product selected
   const cartItem = {
     id: id,
-    price: price.innerHTML,
     image: imageUrl.src,
     title: productName,
     color: chosenColor,

@@ -2,12 +2,13 @@
 const cart = JSON.parse(localStorage.getItem("cart"));
 const apiUrl = "http://localhost:3000/api/products";
 let products = [];
-
+let totalQuantity = 0;
+    let totalPrice = 0;
 // Fetch products from the API so we can get price
 fetch(apiUrl)
   .then((response) => response.json())
-  .then((data) => {
-    products = data;
+  .then((products) => {
+   
 
     // if there is something in the cart: inserting the product into the DOM and working out quantity and price.
     if (cart) {
@@ -43,29 +44,16 @@ fetch(apiUrl)
               </article>`;
 
           cartSection.innerHTML = html;
+          
+          
+        totalQuantity += Number(cartItem.quantity);
+        totalPrice += matchingProduct.price * cartItem.quantity;
+        document.querySelector("#totalQuantity").innerText = totalQuantity;
+         document.querySelector("#totalPrice").innerText = totalPrice;
         }
       });
     }
 
-    // declare temp price and quantity
-    let totalQuantity = 0;
-    let totalPrice = 0;
-
-    cart.forEach((cartItem) => {
-      const matchingProduct = products.find(
-        (product) => cartItem.id === product._id
-      );
-
-      if (matchingProduct) {
-        totalQuantity += Number(cartItem.quantity);
-        totalPrice += matchingProduct.price * cartItem.quantity;
-      }
-    });
-
-    // Update total quantity and total price in DOM
-
-    document.querySelector("#totalQuantity").innerText = totalQuantity;
-    document.querySelector("#totalPrice").innerText = totalPrice;
 
     // Event listener to handle quantity changes
     document.querySelectorAll(".itemQuantity").forEach((item) => {
@@ -104,9 +92,9 @@ fetch(apiUrl)
         );
 
         if (deleteItem !== -1) {
-          cart.splice(deleteItem, 1);
-          event.target.closest(".cart-item").remove();
-          localStorage.setItem("cart", JSON.stringify(cart));
+          cart.splice(deleteItem, 1); // remove from cart array
+          event.target.closest(".cart-item").remove(); // remove from DOM
+          localStorage.setItem("cart", JSON.stringify(cart)); // remove from local storage 
 
           // Update total quantity and total price after deletion
           let newTotalQuantity = 0;

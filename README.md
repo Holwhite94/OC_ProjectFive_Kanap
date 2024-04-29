@@ -1,3 +1,12 @@
+The Brief - Build an e-commerce Website with JavaScript
+
+Manage website events with JavaScript
+Interact with a web service using JavaScript
+Ensure data quality using data validation and cleaning
+Create a test plan for an application
+
+
+
 # Kanap #
 
 This is the front end and back end server for Project 5 of the Web Developer path.
